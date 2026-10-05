@@ -66,6 +66,9 @@ Source and isolated fixtures have been checked. Live WordPress activation, authe
 
 == Changelog ==
 
+= 1.0.1 =
+* Maintenance and improvements.
+
 = 1.0.0 =
 * Initial WordPress conversion of the proven eight-item startup calculator.
 * Added both shortcode intro modes, editable item names and descriptions, responsive layout, and accessible animated example disclosures.

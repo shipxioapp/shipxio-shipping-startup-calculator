@@ -59,12 +59,11 @@ jobs:
           [ "$HEADER"   = "$VERSION" ] || { echo "::error::Plugin header Version is '$HEADER', expected '$VERSION'."; FAILED=1; }
           [ "$CONSTANT" = "$VERSION" ] || { echo "::error::SHIPXIO_SHIPPING_STARTUP_CALCULATOR_VERSION is '$CONSTANT', expected '$VERSION'."; FAILED=1; }
           [ "$STABLE"   = "$VERSION" ] || { echo "::error::readme.txt Stable tag is '$STABLE', expected '$VERSION'."; FAILED=1; }
-          [ -n "$REQUIRES" ] && [ -n "$REQUIRES_PHP" ] || { echo "::error::readme.txt is missing a Requires/Requires PHP header."; FAILED=1; }
-          # Do not fabricate live-test evidence. Tested up to is optional until
-          # actual WordPress acceptance establishes it, but must be a version if set.
+          [ -n "$REQUIRES" ] && [ -n "$TESTED" ] && [ -n "$REQUIRES_PHP" ] || { echo "::error::readme.txt is missing a Requires/Tested/Requires PHP header."; FAILED=1; }
+          # Keep Connect's compatibility gate; use a verified Tested up to value.
           [[ "$REQUIRES" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || { echo "::error::Invalid Requires version."; FAILED=1; }
           [[ "$REQUIRES_PHP" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || { echo "::error::Invalid Requires PHP version."; FAILED=1; }
-          [[ -z "$TESTED" || "$TESTED" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || { echo "::error::Invalid Tested up to version."; FAILED=1; }
+          [[ "$TESTED" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || { echo "::error::Invalid Tested up to version."; FAILED=1; }
           PLUGIN_REQUIRES=$(sed -n 's/^Requires at least:[[:space:]]*\(.*\)$/\1/p' /tmp/plugin.lf | head -1)
           PLUGIN_PHP=$(sed -n 's/^Requires PHP:[[:space:]]*\(.*\)$/\1/p' /tmp/plugin.lf | head -1)
           [ "$PLUGIN_REQUIRES" = "$REQUIRES" ] && [ "$PLUGIN_PHP" = "$REQUIRES_PHP" ] || { echo "::error::Plugin/readme compatibility metadata differs."; FAILED=1; }
