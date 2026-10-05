@@ -4,7 +4,7 @@ Plugin Name: Shipxio Shipping Startup Calculator
 Plugin URI: https://github.com/shipxioapp/shipxio-shipping-startup-calculator
 Update URI: https://github.com/shipxioapp/shipxio-shipping-startup-calculator
 Description: Helps people planning to start a shipping company estimate startup and recurring costs.
-Version: 1.0.2
+Version: 1.0.3
 Requires at least: 6.3
 Requires PHP: 8.1
 Author: Shipxio
@@ -18,7 +18,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('SHIPXIO_SHIPPING_STARTUP_CALCULATOR_VERSION', '1.0.2');
+define('SHIPXIO_SHIPPING_STARTUP_CALCULATOR_VERSION', '1.0.3');
 define('SHIPXIO_SHIPPING_STARTUP_CALCULATOR_FILE', __FILE__);
 
 require_once __DIR__ . '/includes/items.php';
