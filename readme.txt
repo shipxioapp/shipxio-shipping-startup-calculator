@@ -2,6 +2,7 @@
 Contributors: shipxio
 Tags: startup costs, shipping company, calculator, logistics
 Requires at least: 6.3
+Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 1.0.1
 License: GPLv2 or later
@@ -62,9 +63,13 @@ Updates use the public repository at https://github.com/shipxioapp/shipxio-shipp
 
 == Verification ==
 
-Source and isolated fixtures have been checked. Live WordPress activation, authenticated settings saves, Gutenberg, and Elementor acceptance have not been verified. No Tested up to version is declared until live compatibility testing establishes one.
+Compatibility metadata follows the approved Shipxio Connect baseline. Source and isolated fixtures have been checked; these checks do not establish live WordPress activation, authenticated settings saves, Gutenberg, or Elementor acceptance.
 
 == Changelog ==
+
+= 1.0.2 =
+* Set WordPress compatibility metadata to the approved Shipxio Connect baseline.
+* Validate compatibility metadata locally before release preparation and tag creation.
 
 = 1.0.1 =
 * Maintenance and improvements.
