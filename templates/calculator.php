@@ -24,56 +24,56 @@ if (! defined('ABSPATH')) {
     <?php endif; ?>
         <form class="calculator-form">
             <div class="calculator-items">
-                <?php foreach ($items as $item) : ?>
+                <?php foreach ($items as $shipxio_shipping_startup_calculator_item) : ?>
                     <?php
-                    $input_id = $id . '-item-' . $item['key'];
-                    $priority = $item['priority'];
-                    $details = $item['details'] ?? null;
+                    $shipxio_shipping_startup_calculator_input_id = $id . '-item-' . $shipxio_shipping_startup_calculator_item['key'];
+                    $shipxio_shipping_startup_calculator_priority = $shipxio_shipping_startup_calculator_item['priority'];
+                    $shipxio_shipping_startup_calculator_details = $shipxio_shipping_startup_calculator_item['details'] ?? null;
                     ?>
                     <div class="calculator-row">
-                        <label class="calculator-item" for="<?php echo esc_attr($input_id); ?>">
+                        <label class="calculator-item" for="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>">
                             <input
-                                id="<?php echo esc_attr($input_id); ?>"
+                                id="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>"
                                 class="calculator-checkbox"
                                 type="checkbox"
                                 name="startup_items[]"
-                                value="<?php echo esc_attr($item['key']); ?>"
-                                data-cost="<?php echo esc_attr((string) $item['cost']); ?>"
-                                data-currency="<?php echo esc_attr($item['currency']); ?>"
-                                data-billing-period="<?php echo esc_attr($item['billing_period']); ?>"
+                                value="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['key']); ?>"
+                                data-cost="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_item['cost']); ?>"
+                                data-currency="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['currency']); ?>"
+                                data-billing-period="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['billing_period']); ?>"
                             >
                             <span class="calculator-check" aria-hidden="true"></span>
                             <span class="calculator-item-content">
                                 <span class="calculator-item-heading">
-                                    <span class="calculator-item-name"><?php echo esc_html($item['name']); ?></span>
-                                    <span class="calculator-priority priority-<?php echo esc_attr($priority); ?>"><?php echo esc_html($priority_labels[$priority]); ?></span>
+                                    <span class="calculator-item-name"><?php echo esc_html($shipxio_shipping_startup_calculator_item['name']); ?></span>
+                                    <span class="calculator-priority priority-<?php echo esc_attr($shipxio_shipping_startup_calculator_priority); ?>"><?php echo esc_html($priority_labels[$shipxio_shipping_startup_calculator_priority]); ?></span>
                                 </span>
-                                <span class="calculator-item-description"><?php echo esc_html($item['description']); ?></span>
-                                <?php if (isset($item['aside'])) : ?>
-                                    <span class="calculator-item-aside"><?php echo esc_html($item['aside']); ?></span>
+                                <span class="calculator-item-description"><?php echo esc_html($shipxio_shipping_startup_calculator_item['description']); ?></span>
+                                <?php if (isset($shipxio_shipping_startup_calculator_item['aside'])) : ?>
+                                    <span class="calculator-item-aside"><?php echo esc_html($shipxio_shipping_startup_calculator_item['aside']); ?></span>
                                 <?php endif; ?>
                             </span>
-                            <strong class="calculator-item-price"><?php echo esc_html(shipxio_shipping_startup_calculator_price($item)); ?></strong>
+                            <strong class="calculator-item-price"><?php echo esc_html(shipxio_shipping_startup_calculator_price($shipxio_shipping_startup_calculator_item)); ?></strong>
                         </label>
 
-                        <?php if (null !== $details) : ?>
+                        <?php if (null !== $shipxio_shipping_startup_calculator_details) : ?>
                             <details class="calculator-details">
                                 <summary class="calculator-details-summary"><?php echo esc_html__('See what’s included', 'shipxio-shipping-startup-calculator'); ?></summary>
                                 <div class="calculator-details-body">
                                     <p class="calculator-details-title"><?php echo esc_html__('What’s included', 'shipxio-shipping-startup-calculator'); ?></p>
-                                    <p class="calculator-details-intro"><?php echo esc_html($details['intro']); ?></p>
+                                    <p class="calculator-details-intro"><?php echo esc_html($shipxio_shipping_startup_calculator_details['intro']); ?></p>
                                     <ul class="calculator-details-list">
-                                        <?php foreach ($details['list'] as $entry) : ?>
-                                            <li><?php echo esc_html($entry); ?></li>
+                                        <?php foreach ($shipxio_shipping_startup_calculator_details['list'] as $shipxio_shipping_startup_calculator_entry) : ?>
+                                            <li><?php echo esc_html($shipxio_shipping_startup_calculator_entry); ?></li>
                                         <?php endforeach; ?>
                                     </ul>
-                                    <?php if (isset($details['image'])) : ?>
+                                    <?php if (isset($shipxio_shipping_startup_calculator_details['image'])) : ?>
                                         <img
                                             class="calculator-details-image"
-                                            src="<?php echo esc_url(plugin_dir_url(SHIPXIO_SHIPPING_STARTUP_CALCULATOR_FILE) . $details['image']['src']); ?>"
-                                            width="<?php echo esc_attr((string) $details['image']['width']); ?>"
-                                            height="<?php echo esc_attr((string) $details['image']['height']); ?>"
-                                            alt="<?php echo esc_attr($details['image']['alt']); ?>"
+                                            src="<?php echo esc_url(plugin_dir_url(SHIPXIO_SHIPPING_STARTUP_CALCULATOR_FILE) . $shipxio_shipping_startup_calculator_details['image']['src']); ?>"
+                                            width="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_details['image']['width']); ?>"
+                                            height="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_details['image']['height']); ?>"
+                                            alt="<?php echo esc_attr($shipxio_shipping_startup_calculator_details['image']['alt']); ?>"
                                             loading="lazy"
                                         >
                                     <?php endif; ?>

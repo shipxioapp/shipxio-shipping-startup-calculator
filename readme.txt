@@ -67,6 +67,9 @@ Compatibility metadata follows the approved Shipxio Connect baseline. Source and
 
 == Changelog ==
 
+= 1.0.3 =
+* Maintenance and improvements.
+
 = 1.0.2 =
 * Set WordPress compatibility metadata to the approved Shipxio Connect baseline.
 * Validate compatibility metadata locally before release preparation and tag creation.

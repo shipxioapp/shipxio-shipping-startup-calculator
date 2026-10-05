@@ -121,6 +121,27 @@ function shipxio_shipping_startup_calculator_update_manifest()
 }
 
 /**
+ * Whether an array has consecutive integer keys starting at zero.
+ *
+ * Keep manifest validation independent of WordPress's list-check polyfill.
+ *
+ * @param array $value The array to check.
+ * @return bool
+ */
+function shipxio_shipping_startup_calculator_is_list(array $value)
+{
+    $expected_key = 0;
+    foreach ($value as $key => $unused) {
+        if ($key !== $expected_key) {
+            return false;
+        }
+        ++$expected_key;
+    }
+
+    return true;
+}
+
+/**
  * Accept only a manifest that is complete and safe to act on.
  *
  * The package URL decides what WordPress downloads and installs, so it must be
@@ -130,7 +151,7 @@ function shipxio_shipping_startup_calculator_update_manifest()
  */
 function shipxio_shipping_startup_calculator_validate_manifest($data)
 {
-    if (! is_array($data) || array_is_list($data)) {
+    if (! is_array($data) || shipxio_shipping_startup_calculator_is_list($data)) {
         return null;
     }
 
