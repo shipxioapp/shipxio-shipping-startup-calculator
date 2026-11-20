@@ -1,6 +1,10 @@
 /**
  * Shipxio Shipping Startup Calculator
  * wordpress/shipxio-shipping-startup-calculator/assets/css/app.css
+ *
+ * Narrow (single-column) styles come first; the two-column layout is applied
+ * from the calculator's own width through a container query, so it adapts to
+ * theme and Elementor containers rather than the viewport.
  */
 
 .shipxio-shipping-startup-calculator,
@@ -12,6 +16,7 @@
     display: none !important;
 }
 
+/* The theme or Elementor container owns the outer layout. */
 .shipxio-shipping-startup-calculator {
     display: block;
     width: 100%;
@@ -28,19 +33,41 @@
     text-rendering: optimizeLegibility;
 }
 
-.shipxio-shipping-startup-calculator input {
+.shipxio-shipping-startup-calculator input,
+.shipxio-shipping-startup-calculator button {
     font: inherit;
 }
 
+.shipxio-shipping-startup-calculator p {
+    margin: 0;
+}
+
+.shipxio-shipping-startup-calculator .calculator-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* ======================================================
-   Page
+   Container
    ====================================================== */
 
+/* Structural only: no card appearance, so the calculator sits in its parent.
+   No overflow clipping: it would disable the narrow-layout sticky summary. */
 .shipxio-shipping-startup-calculator .startup-calculator {
-    overflow: hidden;
-    border: 1px solid var(--mpx-brd-l, #DEDEDE);
-    border-radius: var(--mpx-brd-lg, 1rem);
-    background: var(--mpx-clr-wh, #ffffff);
+    container-type: inline-size;
+    container-name: ssc-calculator;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
 }
 
 /* ======================================================
@@ -48,35 +75,83 @@
    ====================================================== */
 
 .shipxio-shipping-startup-calculator .calculator-header {
-    padding: var(--mpx-pad-md, 0.75rem) var(--mpx-pad-lg, 1.25rem);
+    padding: 0 0 var(--mpx-pad-md, 0.75rem);
     border-bottom: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
 }
 
-.shipxio-shipping-startup-calculator .calculator-eyebrow {
+/* Header selectors outrank theme and Elementor kit heading rules. */
+.shipxio-shipping-startup-calculator .calculator-header h3.calculator-eyebrow {
     margin: 0 0 0.25rem;
-    color: var(--mpx-clr-pri, #2A7FFF);
-    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
-    font-weight: var(--mpx-fw-b, 700);
-    line-height: 1.3;
-    letter-spacing: 0.08em;
+    padding: 0;
+    color: var(--mpx-clr-gray-d, #636363);
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
+    font-size: var(--mpx-fs-headline, clamp(0.8125rem, 0.76rem + 0.2vw, 0.9375rem));
+    font-weight: var(--mpx-fw-sb, 600);
+    line-height: var(--mpx-lh-headline, clamp(1.125rem, 1.08rem + 0.18vw, 1.25rem));
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 .shipxio-shipping-startup-calculator .calculator-header h2 {
     margin: 0;
-    color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
-    font-size: var(--mpx-fs-h4, clamp(1.5rem, 1.3841rem + 0.488vw, 1.75rem));
+    padding: 0;
+    color: var(--mpx-clr-blk, #000000);
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
+    font-size: var(--mpx-fs-h2, clamp(2rem, 1.53664rem + 1.951vw, 3rem));
     font-weight: var(--mpx-fw-b, 700);
-    line-height: var(--mpx-lh-h4, clamp(1.8125rem, 1.6966rem + 0.488vw, 2.0625rem));
+    line-height: var(--mpx-lh-h2, clamp(2.3125rem, 1.84914rem + 1.951vw, 3.3125rem));
     letter-spacing: -0.03em;
+    text-transform: none;
 }
 
 .shipxio-shipping-startup-calculator .calculator-header>p:last-child {
-    max-width: 58ch;
+    max-width: 68ch;
     margin: 0.25rem 0 0;
     color: var(--mpx-clr-gray-d, #636363);
     font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
     line-height: 1.5;
+}
+
+/* ======================================================
+   Layout
+   ====================================================== */
+
+/* Keep host form defaults from imposing another outer layout. */
+.shipxio-shipping-startup-calculator .calculator-form {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.shipxio-shipping-startup-calculator .calculator-selection {
+    min-width: 0;
+    padding: var(--mpx-pad-md, 0.75rem) 0 var(--mpx-pad-lg, 1.25rem);
+}
+
+.shipxio-shipping-startup-calculator .calculator-selection-header,
+.shipxio-shipping-startup-calculator .calculator-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mpx-pad-sm, 0.5rem);
+    margin-bottom: var(--mpx-pad-sm, 0.5rem);
+}
+
+.shipxio-shipping-startup-calculator .calculator-panel-title {
+    color: var(--mpx-clr-acc-a, #0D0D0D);
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
+    font-size: var(--mpx-fs-sm, 0.9375rem);
+    font-weight: var(--mpx-fw-b, 700);
+    line-height: 1.3;
+}
+
+.shipxio-shipping-startup-calculator .calculator-count {
+    flex-shrink: 0;
+    color: var(--mpx-clr-gray-d, #636363);
+    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ======================================================
@@ -86,10 +161,12 @@
 .shipxio-shipping-startup-calculator .calculator-items {
     display: flex;
     flex-direction: column;
+    gap: 0.125rem;
 }
 
 .shipxio-shipping-startup-calculator .calculator-row {
-    border-bottom: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
+    position: relative;
+    border-radius: var(--mpx-brd-sm, 0.5rem);
     transition: background-color 150ms ease;
 }
 
@@ -97,20 +174,23 @@
     background: rgba(var(--mpx-clr-pri-rgb, 42, 127, 255), 0.04);
 }
 
+/* The label is the whole row except the info control on its right. */
 .shipxio-shipping-startup-calculator .calculator-item {
     position: relative;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: var(--mpx-pad-sm, 0.5rem);
-    min-height: 56px;
-    padding: 0.625rem var(--mpx-pad-lg, 1.25rem);
+    gap: var(--mpx-pad-md, 0.75rem);
+    min-height: 48px;
+    margin: 0;
+    padding: 0.4375rem 2.75rem 0.4375rem var(--mpx-pad-sm, 0.5rem);
+    border-radius: var(--mpx-brd-sm, 0.5rem);
     cursor: pointer;
     transition: background-color 150ms ease;
 }
 
 .shipxio-shipping-startup-calculator .calculator-item:hover {
-    background: rgba(var(--mpx-clr-pri-rgb, 42, 127, 255), 0.025);
+    background: rgba(var(--mpx-clr-pri-rgb, 42, 127, 255), 0.03);
 }
 
 .shipxio-shipping-startup-calculator .calculator-item:has(.calculator-checkbox:focus-visible) {
@@ -118,16 +198,11 @@
     outline-offset: -2px;
 }
 
-/* Rows carrying a disclosure give the summary its vertical room back. */
-.shipxio-shipping-startup-calculator .calculator-row:has(.calculator-details) .calculator-item {
-    min-height: 0;
-    padding-bottom: 0.375rem;
-}
-
 .shipxio-shipping-startup-calculator .calculator-checkbox {
     position: absolute;
     width: 1px;
     height: 1px;
+    margin: 0;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -140,7 +215,7 @@
     height: 16px;
     flex-shrink: 0;
     border: 1.5px solid var(--mpx-brd-l, #DEDEDE);
-    border-radius: 6px;
+    border-radius: 5px;
     background: var(--mpx-clr-wh, #ffffff);
     transition:
         background-color 150ms ease,
@@ -169,145 +244,85 @@
     transform: rotate(45deg);
 }
 
-/* ======================================================
-   Item Content
-   ====================================================== */
-
 .shipxio-shipping-startup-calculator .calculator-item-content {
     display: flex;
     min-width: 0;
     flex-direction: column;
-    gap: 0.125rem;
-}
-
-.shipxio-shipping-startup-calculator .calculator-item-heading {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    gap: 0.375rem;
-    flex-wrap: wrap;
+    overflow-wrap: anywhere;
 }
 
 .shipxio-shipping-startup-calculator .calculator-item-name {
     color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
     font-size: var(--mpx-fs-sm, 0.9375rem);
     font-weight: var(--mpx-fw-b, 700);
     line-height: 1.3;
     letter-spacing: -0.01em;
 }
 
-.shipxio-shipping-startup-calculator .calculator-item-description {
-    color: var(--mpx-clr-gray-d, #636363);
-    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
-    line-height: 1.4;
-}
-
-.shipxio-shipping-startup-calculator .calculator-item-aside {
-    margin-top: 0;
-    color: var(--mpx-clr-gray-l, #9E9E9E);
-    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
-    line-height: 1.4;
-}
-
 .shipxio-shipping-startup-calculator .calculator-item-price {
-    flex-shrink: 0;
-    color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
-    font-size: var(--mpx-fs-sm, 0.9375rem);
-    font-weight: var(--mpx-fw-b, 700);
-    line-height: 1.3;
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-    white-space: nowrap;
-}
-
-/* ======================================================
-   Priority
-   ====================================================== */
-
-.shipxio-shipping-startup-calculator .calculator-priority {
-    display: inline-flex;
-    min-height: 18px;
-    align-items: center;
-    padding: 0 0.375rem;
-    border-radius: var(--mpx-brd-sm, 0.5rem);
+    color: var(--mpx-clr-gray-d, #636363);
     font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
-    font-weight: var(--mpx-fw-sb, 600);
-    line-height: 1;
-    letter-spacing: 0.01em;
-}
-
-.shipxio-shipping-startup-calculator .calculator-priority.priority-required {
-    background: #fff1f1;
-    color: var(--mpx-clr-err-l, #D7291F);
-}
-
-.shipxio-shipping-startup-calculator .calculator-priority.priority-recommended {
-    background: #fff8df;
-    color: var(--mpx-clr-warn-l, #AB7500);
-}
-
-.shipxio-shipping-startup-calculator .calculator-priority.priority-optional {
-    background: #edf8ef;
-    color: var(--mpx-clr-succ-l, #2C8724);
+    font-weight: var(--mpx-fw-md, 500);
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ======================================================
-   Educational Disclosure
+   Info Disclosure
    ====================================================== */
 
+/* The summary sits over the row's right edge; the body opens below the row. */
 .shipxio-shipping-startup-calculator .calculator-details {
-    padding: 0 var(--mpx-pad-lg, 1.25rem) var(--mpx-pad-sm, 0.5rem);
+    margin: 0;
+    padding: 0;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-summary {
-    display: inline-flex;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    width: 36px;
+    height: 36px;
     align-items: center;
-    gap: 0.375rem;
-    margin-left: calc(16px + var(--mpx-pad-sm, 0.5rem));
-    padding: 0.25rem 0;
-    color: var(--mpx-clr-pri, #2A7FFF);
-    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
-    font-weight: var(--mpx-fw-sb, 600);
-    line-height: 1.4;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--mpx-clr-gray-d, #636363);
     list-style: none;
     cursor: pointer;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-summary::-webkit-details-marker {
     display: none;
 }
 
-.shipxio-shipping-startup-calculator .calculator-details-summary::before {
-    width: 6px;
-    height: 6px;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
+.shipxio-shipping-startup-calculator .calculator-details-summary::marker {
     content: "";
-    transform: translateY(-1px) rotate(-45deg);
-    transition: transform 150ms ease;
 }
 
-.shipxio-shipping-startup-calculator .calculator-details[open] .calculator-details-summary::before {
-    transform: translateY(-2px) rotate(45deg);
-}
-
-/* While closing, the element stays open so it can animate out. */
-.shipxio-shipping-startup-calculator .calculator-details.is-closing .calculator-details-summary::before {
-    transform: translateY(-1px) rotate(-45deg);
+.shipxio-shipping-startup-calculator .calculator-details-summary:hover,
+.shipxio-shipping-startup-calculator .calculator-details[open]:not(.is-closing) .calculator-details-summary {
+    background: rgba(var(--mpx-clr-pri-rgb, 42, 127, 255), 0.08);
+    color: var(--mpx-clr-pri, #2A7FFF);
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-summary:focus-visible {
     outline: 2px solid var(--mpx-clr-pri, #2A7FFF);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline-offset: 0;
+}
+
+.shipxio-shipping-startup-calculator .calculator-info-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-body {
-    max-width: 68ch;
-    margin-left: calc(16px + var(--mpx-pad-sm, 0.5rem));
-    padding-top: var(--mpx-pad-sm, 0.5rem);
+    padding: 0 var(--mpx-pad-md, 0.75rem) var(--mpx-pad-md, 0.75rem) calc(var(--mpx-pad-sm, 0.5rem) + 16px + var(--mpx-pad-md, 0.75rem));
 }
 
 /* Only while the height is being animated; cleared again afterwards so the
@@ -317,40 +332,44 @@
     will-change: height, opacity, transform;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .shipxio-shipping-startup-calculator .calculator-details-summary::before {
-        transition: none;
-    }
+.shipxio-shipping-startup-calculator .calculator-item-description,
+.shipxio-shipping-startup-calculator .calculator-details-intro,
+.shipxio-shipping-startup-calculator .calculator-details-list {
+    color: var(--mpx-clr-gray-d, #636363);
+    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
+    line-height: 1.5;
+}
+
+.shipxio-shipping-startup-calculator .calculator-item-aside {
+    margin-top: 0.25rem;
+    color: var(--mpx-clr-gray-l, #9E9E9E);
+    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
+    line-height: 1.4;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-title {
-    margin: 0;
+    margin-top: var(--mpx-pad-sm, 0.5rem);
     color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
     font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
     font-weight: var(--mpx-fw-b, 700);
     line-height: 1.4;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-intro {
-    margin: 0.25rem 0 0;
-    color: var(--mpx-clr-gray-d, #636363);
-    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
-    line-height: 1.5;
+    margin-top: 0.25rem;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-list {
     margin: var(--mpx-pad-sm, 0.5rem) 0 0;
     padding-left: 1.1em;
-    color: var(--mpx-clr-gray-d, #636363);
-    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
     line-height: 1.6;
 }
 
 .shipxio-shipping-startup-calculator .calculator-details-image {
     display: block;
     width: 100%;
-    max-width: 700px;
+    max-width: 100%;
     height: auto;
     margin-top: var(--mpx-pad-md, 0.75rem);
     border: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
@@ -359,59 +378,167 @@
 }
 
 /* ======================================================
-   Summary
+   Buttons
    ====================================================== */
 
-.shipxio-shipping-startup-calculator .calculator-summary {
-    padding: var(--mpx-pad-md, 0.75rem) var(--mpx-pad-lg, 1.25rem);
-    background: var(--mpx-surface-l, #FCFCFC);
-}
-
-.shipxio-shipping-startup-calculator .calculator-summary-primary,
-.shipxio-shipping-startup-calculator .calculator-recurring>div {
+/* Full resets so theme and Elementor button styles do not leak in. */
+.shipxio-shipping-startup-calculator .calculator-bulk,
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle {
+    -webkit-appearance: none;
+    appearance: none;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: var(--mpx-brd-sm, 0.5rem);
+    box-shadow: none;
+    color: var(--mpx-clr-acc-a, #0D0D0D);
+    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
+    font-weight: var(--mpx-fw-sb, 600);
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-decoration: none;
+    text-transform: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease;
 }
 
-.shipxio-shipping-startup-calculator .calculator-summary-primary>span {
+.shipxio-shipping-startup-calculator .calculator-bulk {
+    width: 100%;
+    min-height: 40px;
+    margin-top: var(--mpx-pad-md, 0.75rem);
+    padding: var(--mpx-pad-sm, 0.5rem) 1rem;
+    border: 1px solid var(--mpx-brd-l, #DEDEDE);
+    background: var(--mpx-clr-wh, #ffffff);
+}
+
+.shipxio-shipping-startup-calculator .calculator-bulk:hover,
+.shipxio-shipping-startup-calculator .calculator-bulk:focus {
+    border-color: var(--mpx-clr-gray-l, #9E9E9E);
+    background: var(--mpx-surface-l, #FCFCFC);
     color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
-    font-size: var(--mpx-fs-sm, 0.9375rem);
-    font-weight: var(--mpx-fw-b, 700);
-    line-height: 1.4;
+}
+
+.shipxio-shipping-startup-calculator .calculator-bulk:focus-visible,
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle:focus-visible {
+    outline: 2px solid var(--mpx-clr-pri, #2A7FFF);
+    outline-offset: 2px;
+}
+
+/* ======================================================
+   Summary (narrow: compact sticky bar)
+   ====================================================== */
+
+/* Sticks to the viewport bottom only while the calculator is in view; where a
+   theme ancestor disables sticky it simply stays in the normal flow. */
+.shipxio-shipping-startup-calculator .calculator-summary {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "title toggle"
+        "total toggle"
+        "breakdown breakdown";
+    align-items: center;
+    gap: 0 var(--mpx-pad-md, 0.75rem);
+    padding: var(--mpx-pad-md, 0.75rem) var(--mpx-pad-lg, 1.25rem);
+    border: 1px solid var(--mpx-brd-l, #DEDEDE);
+    border-radius: var(--mpx-brd-md, 0.75rem);
+    background: var(--mpx-clr-wh, #ffffff);
+    box-shadow: 0 -6px 16px rgba(var(--mpx-clr-acc-a-rgb, 13, 13, 13), 0.06);
+}
+
+/* Narrow bar: the panel title labels the total; the icon is wide-only. */
+.shipxio-shipping-startup-calculator .calculator-summary .calculator-summary-header {
+    grid-area: title;
+    margin-bottom: 0;
+}
+
+.shipxio-shipping-startup-calculator .calculator-summary-icon {
+    display: none;
+    flex-shrink: 0;
+    color: var(--mpx-clr-gray-d, #636363);
+}
+
+.shipxio-shipping-startup-calculator .calculator-summary-primary {
+    display: flex;
+    grid-area: total;
+    min-width: 0;
+    flex-direction: column;
 }
 
 .shipxio-shipping-startup-calculator .calculator-summary-primary>strong {
     color: var(--mpx-clr-pri, #2A7FFF);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
-    font-size: var(--mpx-fs-h4, clamp(1.5rem, 1.3841rem + 0.488vw, 1.75rem));
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
+    font-size: 1.375rem;
     font-weight: var(--mpx-fw-b, 700);
     line-height: 1.2;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
-.shipxio-shipping-startup-calculator .calculator-note {
-    margin: var(--mpx-pad-sm, 0.5rem) 0 0;
-    color: var(--mpx-clr-gray-l, #9E9E9E);
-    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
-    line-height: 1.45;
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle {
+    grid-area: toggle;
+    gap: 0.375rem;
+    min-height: 40px;
+    padding: var(--mpx-pad-sm, 0.5rem) 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--mpx-clr-pri, #2A7FFF);
+}
+
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle:hover,
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle:focus {
+    border: 0;
+    background: transparent;
+    color: var(--mpx-clr-pri, #2A7FFF);
+}
+
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle::after {
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    content: "";
+    transform: translateY(1px) rotate(-135deg);
+    transition: transform 150ms ease;
+}
+
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle[aria-expanded="true"]::after {
+    transform: translateY(-2px) rotate(45deg);
+}
+
+.shipxio-shipping-startup-calculator .calculator-breakdown {
+    grid-area: breakdown;
+}
+
+.shipxio-shipping-startup-calculator .calculator-breakdown-toggle[aria-expanded="false"]+.calculator-breakdown {
+    display: none;
 }
 
 /* ======================================================
-   Recurring Costs
+   Recurring Costs and Note
    ====================================================== */
 
 .shipxio-shipping-startup-calculator .calculator-recurring {
     display: flex;
-    margin-top: var(--mpx-pad-sm, 0.5rem);
-    padding-top: var(--mpx-pad-sm, 0.5rem);
-    border-top: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
     flex-direction: column;
     gap: 0.25rem;
+    padding-top: var(--mpx-pad-sm, 0.5rem);
+}
+
+.shipxio-shipping-startup-calculator .calculator-recurring>div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 1rem;
 }
 
 .shipxio-shipping-startup-calculator .calculator-recurring span {
@@ -422,80 +549,103 @@
 }
 
 .shipxio-shipping-startup-calculator .calculator-recurring strong {
-    flex-shrink: 0;
     color: var(--mpx-clr-acc-a, #0D0D0D);
-    font-family: var(--mpx-ff-heading, "Plus Jakarta Sans", sans-serif);
-    font-size: var(--mpx-fs-xs, clamp(0.84375rem, 0.82926rem + 0.061vw, 0.875rem));
+    font-family: var(--mpx-ff-heading, "Geist", sans-serif);
+    font-size: var(--mpx-fs-sm, 0.9375rem);
     font-weight: var(--mpx-fw-b, 700);
     line-height: 1.5;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
+.shipxio-shipping-startup-calculator .calculator-note {
+    margin-top: var(--mpx-pad-sm, 0.5rem);
+    color: var(--mpx-clr-gray-l, #9E9E9E);
+    font-size: var(--mpx-fs-xxs, clamp(0.75rem, 0.70654rem + 0.183vw, 0.84375rem));
+    line-height: 1.45;
+}
+
 /* ======================================================
-   Responsive
+   Wide Container: two columns, about 60/40
    ====================================================== */
 
-@media (max-width: 640px) {
+@container ssc-calculator (min-width: 720px) {
 
-    .shipxio-shipping-startup-calculator .calculator-header,
-    .shipxio-shipping-startup-calculator .calculator-summary,
-    .shipxio-shipping-startup-calculator .calculator-item,
-    .shipxio-shipping-startup-calculator .calculator-details {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-}
-
-@media (max-width: 520px) {
-
-    .shipxio-shipping-startup-calculator .calculator-item {
-        grid-template-columns: auto minmax(0, 1fr);
+    .shipxio-shipping-startup-calculator .calculator-form {
+        display: grid;
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
         align-items: start;
-        row-gap: 0.25rem;
-        padding-top: var(--mpx-pad-sm, 0.5rem);
-        padding-bottom: var(--mpx-pad-sm, 0.5rem);
+        gap: var(--mpx-pad-lg, 1.25rem);
+        padding: var(--mpx-pad-lg, 1.25rem) 0 0;
     }
 
-    .shipxio-shipping-startup-calculator .calculator-check {
-        margin-top: 0.125rem;
+    .shipxio-shipping-startup-calculator .calculator-selection {
+        padding: 0;
     }
 
-    .shipxio-shipping-startup-calculator .calculator-item-price {
-        grid-column: 2;
-        text-align: left;
+    .shipxio-shipping-startup-calculator .calculator-summary {
+        position: static;
+        display: block;
+        padding: var(--mpx-pad-lg, 1.25rem);
+        border: 1px solid var(--mpx-brd-l, #DEDEDE);
+        border-radius: var(--mpx-brd-md, 0.75rem);
+        background: var(--mpx-surface-l, #FCFCFC);
+        box-shadow: none;
     }
 
-    .shipxio-shipping-startup-calculator .calculator-details-summary,
+    .shipxio-shipping-startup-calculator .calculator-summary .calculator-summary-header {
+        margin-bottom: var(--mpx-pad-sm, 0.5rem);
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-summary-icon {
+        display: block;
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-summary-primary {
+        padding-bottom: var(--mpx-pad-md, 0.75rem);
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-summary-primary>strong {
+        font-size: var(--mpx-fs-h4, clamp(1.5rem, 1.3841rem + 0.488vw, 1.75rem));
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-breakdown-toggle {
+        display: none;
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-breakdown-toggle[aria-expanded="false"]+.calculator-breakdown {
+        display: block;
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-recurring {
+        gap: var(--mpx-pad-sm, 0.5rem);
+        padding: var(--mpx-pad-md, 0.75rem) 0 0;
+        border-top: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
+    }
+
+    .shipxio-shipping-startup-calculator .calculator-note {
+        margin-top: var(--mpx-pad-md, 0.75rem);
+        padding-top: var(--mpx-pad-md, 0.75rem);
+        border-top: 1px solid var(--mpx-clr-muted-l, #EEEEEE);
+    }
+}
+
+/* ======================================================
+   Small Screens
+   ====================================================== */
+
+@container ssc-calculator (max-width: 400px) {
+
     .shipxio-shipping-startup-calculator .calculator-details-body {
-        margin-left: 0;
-    }
-
-    .shipxio-shipping-startup-calculator .calculator-details-summary {
-        min-height: 40px;
-        padding: var(--mpx-pad-sm, 0.5rem) 0;
-    }
-
-    .shipxio-shipping-startup-calculator .calculator-details-image {
-        max-width: 100%;
+        padding-left: var(--mpx-pad-sm, 0.5rem);
     }
 }
 
-/* Keep host form/label defaults from imposing another outer layout. */
-.shipxio-shipping-startup-calculator .calculator-form {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
+@media (prefers-reduced-motion: reduce) {
 
-.shipxio-shipping-startup-calculator .calculator-item {
-    margin: 0;
-}
-
-.shipxio-shipping-startup-calculator .calculator-item-content {
-    overflow-wrap: anywhere;
-}
-
-.shipxio-shipping-startup-calculator .calculator-summary-primary {
-    flex-wrap: wrap;
+    .shipxio-shipping-startup-calculator .calculator-breakdown-toggle::after,
+    .shipxio-shipping-startup-calculator .calculator-row,
+    .shipxio-shipping-startup-calculator .calculator-item {
+        transition: none;
+    }
 }

@@ -37,11 +37,6 @@ function shipxio_shipping_startup_calculator_render_shortcode($atts = array(), $
     $id = 'shipxio-shipping-startup-calculator-' . wp_generate_uuid4();
     $show_intro = shipxio_shipping_startup_calculator_show_intro($atts, $tag);
     $items = shipxio_shipping_startup_calculator_items();
-    $priority_labels = array(
-        'required' => __('Required', 'shipxio-shipping-startup-calculator'),
-        'recommended' => __('Recommended', 'shipxio-shipping-startup-calculator'),
-        'optional' => __('Optional', 'shipxio-shipping-startup-calculator'),
-    );
 
     ob_start();
     include __DIR__ . '/../templates/calculator.php';

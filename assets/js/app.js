@@ -113,6 +113,33 @@
             yearlyRow.hidden = yearlyUsd === 0;
 
             recurringCosts.hidden = monthlyUsd === 0 && yearlyUsd === 0;
+
+            updateSelectionState();
+        }
+
+        // Presentation only: the count and bulk label follow the checkboxes.
+        const selectedCount = root.querySelector('[data-ssc-id="selected-count"]');
+        const bulkToggle = root.querySelector('[data-ssc-id="bulk-toggle"]');
+
+        function allSelected() {
+            return checkboxes.every((checkbox) => checkbox.checked);
+        }
+
+        function updateSelectionState() {
+            const checked = checkboxes.filter((checkbox) => checkbox.checked).length;
+
+            if (selectedCount) {
+                const format = selectedCount.dataset.format || '%1$d of %2$d selected';
+                selectedCount.textContent = format
+                    .replace('%1$d', String(checked))
+                    .replace('%2$d', String(checkboxes.length));
+            }
+
+            if (bulkToggle) {
+                bulkToggle.textContent = allSelected()
+                    ? bulkToggle.dataset.clearLabel
+                    : bulkToggle.dataset.selectLabel;
+            }
         }
 
         form.addEventListener('change', (event) => {
@@ -120,6 +147,25 @@
                 calculateTotals();
             }
         });
+
+        if (bulkToggle) {
+            bulkToggle.addEventListener('click', () => {
+                const select = !allSelected();
+                checkboxes.forEach((checkbox) => {
+                    checkbox.checked = select;
+                });
+                calculateTotals();
+            });
+        }
+
+        // The narrow-layout breakdown; wide layouts always show it via CSS.
+        const breakdownToggle = root.querySelector('[data-ssc-id="breakdown-toggle"]');
+        if (breakdownToggle) {
+            breakdownToggle.addEventListener('click', () => {
+                const expanded = breakdownToggle.getAttribute('aria-expanded') !== 'true';
+                breakdownToggle.setAttribute('aria-expanded', String(expanded));
+            });
+        }
 
         calculateTotals();
     }

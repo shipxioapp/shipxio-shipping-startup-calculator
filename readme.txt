@@ -67,6 +67,9 @@ Compatibility metadata follows the approved Shipxio Connect baseline. Source and
 
 == Changelog ==
 
+= 1.0.5 =
+* Maintenance and improvements.
+
 = 1.0.4 =
 * Maintenance and improvements.
 
