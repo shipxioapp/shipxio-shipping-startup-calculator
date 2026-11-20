@@ -37,47 +37,62 @@ $shipxio_shipping_startup_calculator_priorities = shipxio_shipping_startup_calcu
                         <?php
                         $shipxio_shipping_startup_calculator_input_id = $id . '-item-' . $shipxio_shipping_startup_calculator_item['key'];
                         $shipxio_shipping_startup_calculator_details = $shipxio_shipping_startup_calculator_item['details'] ?? null;
+                        $shipxio_shipping_startup_calculator_priority = $shipxio_shipping_startup_calculator_item['priority'] ?? '';
+                        $shipxio_shipping_startup_calculator_has_priority = isset($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_priority]);
+                        $shipxio_shipping_startup_calculator_has_info = '' !== trim($shipxio_shipping_startup_calculator_item['description']) || isset($shipxio_shipping_startup_calculator_item['aside']) || null !== $shipxio_shipping_startup_calculator_details;
+                        $shipxio_shipping_startup_calculator_priority_id = $shipxio_shipping_startup_calculator_input_id . '-priority';
+                        $shipxio_shipping_startup_calculator_info_id = $shipxio_shipping_startup_calculator_input_id . '-info';
                         ?>
                         <div class="calculator-row">
-                            <label class="calculator-item" for="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>">
-                                <input
-                                    id="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>"
-                                    class="calculator-checkbox"
-                                    type="checkbox"
-                                    name="startup_items[]"
-                                    value="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['key']); ?>"
-                                    <?php // Variable prices carry no cost data, so no total ever includes them. ?>
-                                    <?php if (null !== $shipxio_shipping_startup_calculator_item['cost']) : ?>
-                                    data-cost="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_item['cost']); ?>"
-                                    data-currency="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['currency']); ?>"
-                                    data-billing-period="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['billing_period']); ?>"
-                                    <?php endif; ?>
-                                >
-                                <span class="calculator-check" aria-hidden="true"></span>
-                                <span class="calculator-item-content">
-                                    <span class="calculator-item-heading">
-                                        <span class="calculator-item-name"><?php echo esc_html($shipxio_shipping_startup_calculator_item['name']); ?></span>
-                                        <?php if (isset($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_item['priority'] ?? ''])) : ?>
-                                            <span class="calculator-priority priority-<?php echo esc_attr($shipxio_shipping_startup_calculator_item['priority']); ?>"><?php echo esc_html($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_item['priority']]); ?></span>
+                            <?php // Header: the selectable label, then the badge and info button as one group. ?>
+                            <div class="calculator-row-header">
+                                <label class="calculator-item" for="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>">
+                                    <input
+                                        id="<?php echo esc_attr($shipxio_shipping_startup_calculator_input_id); ?>"
+                                        class="calculator-checkbox"
+                                        type="checkbox"
+                                        name="startup_items[]"
+                                        value="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['key']); ?>"
+                                        <?php if ($shipxio_shipping_startup_calculator_has_priority) : ?>
+                                        aria-describedby="<?php echo esc_attr($shipxio_shipping_startup_calculator_priority_id); ?>"
                                         <?php endif; ?>
+                                        <?php // Variable prices carry no cost data, so no total ever includes them. ?>
+                                        <?php if (null !== $shipxio_shipping_startup_calculator_item['cost']) : ?>
+                                        data-cost="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_item['cost']); ?>"
+                                        data-currency="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['currency']); ?>"
+                                        data-billing-period="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['billing_period']); ?>"
+                                        <?php endif; ?>
+                                    >
+                                    <span class="calculator-check" aria-hidden="true"></span>
+                                    <span class="calculator-item-content">
+                                        <span class="calculator-item-name"><?php echo esc_html($shipxio_shipping_startup_calculator_item['name']); ?></span>
+                                        <span class="calculator-item-price"><?php echo esc_html(shipxio_shipping_startup_calculator_price($shipxio_shipping_startup_calculator_item)); ?></span>
                                     </span>
-                                    <span class="calculator-item-price"><?php echo esc_html(shipxio_shipping_startup_calculator_price($shipxio_shipping_startup_calculator_item)); ?></span>
-                                </span>
-                            </label>
+                                </label>
 
-                            <?php // The disclosure stays outside the label so it never toggles the checkbox. ?>
-                            <?php if ('' !== trim($shipxio_shipping_startup_calculator_item['description']) || isset($shipxio_shipping_startup_calculator_item['aside']) || null !== $shipxio_shipping_startup_calculator_details) : ?>
-                            <details class="calculator-details">
-                                <summary class="calculator-details-summary">
-                                    <svg class="calculator-info-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.25" r="1" fill="currentColor"/></svg>
-                                    <span class="calculator-sr-only">
-                                        <?php
-                                        /* translators: %s: calculator item name. */
-                                        echo esc_html(sprintf(__('About %s', 'shipxio-shipping-startup-calculator'), $shipxio_shipping_startup_calculator_item['name']));
-                                        ?>
-                                    </span>
-                                </summary>
-                                <div class="calculator-details-body">
+                                <?php if ($shipxio_shipping_startup_calculator_has_priority || $shipxio_shipping_startup_calculator_has_info) : ?>
+                                <div class="calculator-row-actions">
+                                    <?php if ($shipxio_shipping_startup_calculator_has_priority) : ?>
+                                        <span id="<?php echo esc_attr($shipxio_shipping_startup_calculator_priority_id); ?>" class="calculator-priority priority-<?php echo esc_attr($shipxio_shipping_startup_calculator_priority); ?>"><?php echo esc_html($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_priority]); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($shipxio_shipping_startup_calculator_has_info) : ?>
+                                        <?php // A sibling of the label, so it never toggles the checkbox. ?>
+                                        <button type="button" class="calculator-info" aria-expanded="false" aria-controls="<?php echo esc_attr($shipxio_shipping_startup_calculator_info_id); ?>">
+                                            <svg class="calculator-info-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.25" r="1" fill="currentColor"/></svg>
+                                            <span class="calculator-sr-only">
+                                                <?php
+                                                /* translators: %s: calculator item name. */
+                                                echo esc_html(sprintf(__('About %s', 'shipxio-shipping-startup-calculator'), $shipxio_shipping_startup_calculator_item['name']));
+                                                ?>
+                                            </span>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if ($shipxio_shipping_startup_calculator_has_info) : ?>
+                                <div class="calculator-details-body" id="<?php echo esc_attr($shipxio_shipping_startup_calculator_info_id); ?>" hidden>
                                     <?php if ('' !== trim($shipxio_shipping_startup_calculator_item['description'])) : ?>
                                         <p class="calculator-item-description"><?php echo esc_html($shipxio_shipping_startup_calculator_item['description']); ?></p>
                                     <?php endif; ?>
@@ -104,7 +119,6 @@ $shipxio_shipping_startup_calculator_priorities = shipxio_shipping_startup_calcu
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
-                            </details>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>

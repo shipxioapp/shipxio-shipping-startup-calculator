@@ -7,16 +7,16 @@ A WordPress calculator for people planning to start a shipping company. Estimate
 | Item | Default price |
 | --- | --- |
 | Business Registration | J$6,000 |
+| Logistics Provider / Warehouse | Free – Varies |
+| Shipping Software | US$19.99/month |
 | Logo Design | J$12,000 |
 | Brand Identity | J$30,000 |
 | Domain Name | US$20/year |
-| Website | J$100,000 |
-| Web Hosting | US$143.88/year |
 | Business Email | US$20/year |
-| Shipping Software | US$19.99/month |
-| Logistics Provider / Warehouse | Free – Varies |
+| Web Hosting | US$143.88/year |
+| Website | J$100,000 |
 
-Administrators can change these prices, add their own items, and reorder the list (see [Settings](#settings)).
+Items appear in this default order until an administrator saves a different one. Administrators can change these prices, add their own items, and reorder the list (see [Settings](#settings)).
 
 Costs are shown separately by currency and billing period. There is no currency conversion, and recurring costs do not enter the startup estimate. Variable prices, such as "Free – Varies", are shown as text and never enter any total.
 

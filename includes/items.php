@@ -150,7 +150,20 @@ function shipxio_shipping_startup_calculator_default_items()
         }
     }
     unset($item);
-    return $items;
+
+    // Default display order. Administrators can reorder in Settings; a saved
+    // order ("_order") takes precedence over this sequence.
+    return shipxio_shipping_startup_calculator_apply_order($items, array(
+        'business-registration',
+        'logistics-provider',
+        'shipping-software',
+        'logo-design',
+        'brand-identity',
+        'domain',
+        'business-email',
+        'web-hosting',
+        'landing-page',
+    ));
 }
 
 /**

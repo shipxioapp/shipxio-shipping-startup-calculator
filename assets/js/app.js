@@ -173,10 +173,10 @@
 /**
  * Educational disclosures.
  *
- * The rows use native <details>/<summary>. Browsers do not transition them,
- * so the open and close are driven here from the measured content height.
- * The disclosure sits outside the row <label>, so none of this touches the
- * checkbox.
+ * Each row has an info <button aria-expanded aria-controls> and a sibling
+ * body region with the hidden attribute (the standard disclosure pattern).
+ * The button is outside the row <label>, so none of this touches the
+ * checkbox. Open and close animate from the measured content height.
  */
     function initializeDisclosures(root) {
         const DURATION = 240;
@@ -188,32 +188,25 @@
 
         const supportsAnimation = typeof Element.prototype.animate === 'function';
 
-        if (!supportsAnimation) {
-            return;
-        }
+        const buttons = Array.from(root.querySelectorAll('.calculator-info'));
 
-        const disclosures = Array.from(
-            root.querySelectorAll('.calculator-details')
-        );
+        buttons.forEach((button) => {
+            const targetId = button.getAttribute('aria-controls');
+            const body = targetId ? root.querySelector(`[id="${targetId}"]`) : null;
 
-        disclosures.forEach((details) => {
-            const summary = details.querySelector('summary');
-            const body = details.querySelector('.calculator-details-body');
-
-            if (!summary || !body) {
+            if (!body) {
                 return;
             }
 
             let animation = null;
-            let expanded = details.open;
+            let expanded = button.getAttribute('aria-expanded') === 'true';
 
             function settle() {
                 const finished = animation;
 
                 animation = null;
 
-                details.open = expanded;
-                details.classList.remove('is-closing');
+                body.hidden = !expanded;
 
                 body.classList.remove('is-animating');
                 body.style.height = '';
@@ -224,6 +217,14 @@
             }
 
             function toggle(opening) {
+                expanded = opening;
+                button.setAttribute('aria-expanded', String(opening));
+
+                if (!supportsAnimation || reducedMotion.matches) {
+                    settle();
+                    return;
+                }
+
                 const startHeight = animation
                     ? body.getBoundingClientRect().height
                     : (opening ? 0 : body.getBoundingClientRect().height);
@@ -238,11 +239,8 @@
                     animation = null;
                 }
 
-                expanded = opening;
-
                 // Keep the content rendered while closing so it can animate out.
-                details.open = true;
-                details.classList.toggle('is-closing', !opening);
+                body.hidden = false;
 
                 body.classList.add('is-animating');
                 body.style.height = '';
@@ -265,20 +263,17 @@
                     }
                 );
 
-                animation.onfinish = settle;
-            }
-
-            summary.addEventListener('click', (event) => {
-                if (reducedMotion.matches) {
-                    if (animation) {
+                // Settle only if this animation is still the current one; a
+                // cancelled animation (rapid clicks) rejects and is ignored.
+                const current = animation;
+                current.finished.then(() => {
+                    if (animation === current) {
                         settle();
                     }
-                    expanded = !details.open;
-                    return;
-                }
+                }, () => {});
+            }
 
-                event.preventDefault();
-
+            button.addEventListener('click', () => {
                 toggle(!expanded);
             });
         });
