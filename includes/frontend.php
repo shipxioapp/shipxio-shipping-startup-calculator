@@ -46,6 +46,11 @@ function shipxio_shipping_startup_calculator_render_shortcode($atts = array(), $
 /** Preserve the prototype currency and billing-period formatting. */
 function shipxio_shipping_startup_calculator_price($item)
 {
+    // Variable pricing is display text only.
+    if (null === $item['cost']) {
+        return (string) ($item['price_label'] ?? '');
+    }
+
     $cost = (float) $item['cost'];
     if ('JMD' === $item['currency']) {
         return 'J$' . number_format($cost, 0);

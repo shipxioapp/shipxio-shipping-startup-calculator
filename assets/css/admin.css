@@ -372,10 +372,36 @@
 }
 
 .shipxio-startup-admin .shipxio-startup-item-fields input,
-.shipxio-startup-admin .shipxio-startup-item-fields textarea {
+.shipxio-startup-admin .shipxio-startup-item-fields textarea,
+.shipxio-startup-admin .shipxio-startup-item-fields select {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
+}
+
+.shipxio-startup-admin .shipxio-startup-item-fields input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.shipxio-startup-admin .shipxio-startup-move {
+    display: flex;
+    gap: 6px;
+}
+
+.shipxio-startup-admin .shipxio-startup-move[hidden] {
+    display: none;
+}
+
+.shipxio-startup-admin .shipxio-startup-item-fields label.shipxio-startup-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 400;
+}
+
+.shipxio-startup-admin .shipxio-startup-item-fields .description {
+    margin: 0;
 }
 
 .shipxio-startup-admin .shipxio-startup-shortcode-action {

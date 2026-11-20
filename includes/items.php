@@ -24,7 +24,7 @@ function shipxio_shipping_startup_calculator_default_items()
             'cost' => 12000,
             'currency' => 'JMD',
             'billing_period' => 'one_time',
-            'priority' => 'required',
+            'priority' => 'recommended',
         ],
         [
             'key' => 'brand-identity',
@@ -78,9 +78,20 @@ function shipxio_shipping_startup_calculator_default_items()
             'key' => 'shipping-software',
             'name' => 'Shipping Software',
             'description' => 'One place to manage customers, packages, payments and daily deliveries.',
-            'cost' => 60,
+            'cost' => 19.99,
             'currency' => 'USD',
             'billing_period' => 'month',
+            'priority' => 'required',
+        ],
+        [
+            // Variable pricing: shown as text, never counted in any total.
+            'key' => 'logistics-provider',
+            'name' => 'Logistics Provider / Warehouse',
+            'description' => 'Some logistics providers offer free setup, while others charge a fee. Package handling, freight, and other service charges are billed separately.',
+            'cost' => null,
+            'price_label' => 'Free – Varies',
+            'currency' => '',
+            'billing_period' => '',
             'priority' => 'required',
         ],
     ];
@@ -142,23 +153,198 @@ function shipxio_shipping_startup_calculator_default_items()
     return $items;
 }
 
-/** Only names and descriptions may override the proven definitions. */
+/**
+ * Validate an administrator price for an item's currency.
+ *
+ * JMD amounts are whole numbers, matching the calculator's J$ formatting; USD
+ * amounts allow up to two decimal places. Returns the amount, or null when the
+ * value is not a non-negative number in that form.
+ */
+function shipxio_shipping_startup_calculator_parse_cost($value, $currency)
+{
+    if (is_int($value) || is_float($value)) {
+        $value = shipxio_shipping_startup_calculator_cost_input_value($value);
+    }
+    if (! is_string($value)) {
+        return null;
+    }
+
+    $pattern = 'JMD' === $currency ? '/^\d{1,9}$/' : '/^\d{1,9}(\.\d{1,2})?$/';
+    $value = trim($value);
+    if (1 !== preg_match($pattern, $value)) {
+        return null;
+    }
+
+    return (float) $value;
+}
+
+/** A cost as an unformatted field value: 6000, 20, 143.88. */
+function shipxio_shipping_startup_calculator_cost_input_value($cost)
+{
+    $cost = (float) $cost;
+    return $cost === floor($cost) ? (string) (int) $cost : number_format($cost, 2, '.', '');
+}
+
+/** Priority classifications shown as badges. Priority never affects display order. */
+function shipxio_shipping_startup_calculator_priority_labels()
+{
+    return array(
+        'required' => __('Required', 'shipxio-shipping-startup-calculator'),
+        'recommended' => __('Recommended', 'shipxio-shipping-startup-calculator'),
+        'optional' => __('Optional', 'shipxio-shipping-startup-calculator'),
+    );
+}
+
+/**
+ * Pricing choices for administrator-added items: [currency, billing period].
+ * "variable" items show a text label and never contribute to a total.
+ */
+function shipxio_shipping_startup_calculator_pricing_types()
+{
+    return array(
+        'jmd_one_time' => array('JMD', 'one_time'),
+        'usd_month'    => array('USD', 'month'),
+        'usd_year'     => array('USD', 'year'),
+        'variable'     => array('', ''),
+    );
+}
+
+/** The pricing type of an item, derived from its currency and billing period. */
+function shipxio_shipping_startup_calculator_pricing_type($item)
+{
+    if (null === $item['cost']) {
+        return 'variable';
+    }
+    foreach (shipxio_shipping_startup_calculator_pricing_types() as $type => $pair) {
+        if (array($item['currency'], $item['billing_period']) === $pair) {
+            return $type;
+        }
+    }
+    return '';
+}
+
+/**
+ * Build a calculator item from a stored administrator-added item.
+ *
+ * Returns null when the stored data is incomplete or invalid, so a damaged
+ * entry is skipped rather than shown with a wrong price.
+ */
+function shipxio_shipping_startup_calculator_custom_item($stored)
+{
+    if (! is_array($stored)) {
+        return null;
+    }
+    $key = $stored['key'] ?? '';
+    $name = $stored['name'] ?? '';
+    $pricing = $stored['pricing'] ?? '';
+    $types = shipxio_shipping_startup_calculator_pricing_types();
+    if (! is_string($key) || 1 !== preg_match('/^custom-[a-z0-9]{10}$/', $key)
+        || ! is_string($name) || '' === trim($name)
+        || ! is_string($pricing) || ! isset($types[$pricing])) {
+        return null;
+    }
+
+    $item = array(
+        'key' => $key,
+        'name' => $name,
+        'description' => is_string($stored['description'] ?? null) ? $stored['description'] : '',
+        'cost' => null,
+        'currency' => $types[$pricing][0],
+        'billing_period' => $types[$pricing][1],
+        'custom' => true,
+    );
+
+    // Optional; items saved before priorities existed simply have none.
+    $priority = $stored['priority'] ?? '';
+    if (is_string($priority) && isset(shipxio_shipping_startup_calculator_priority_labels()[$priority])) {
+        $item['priority'] = $priority;
+    }
+
+    if ('variable' === $pricing) {
+        $label = $stored['price_label'] ?? '';
+        if (! is_string($label) || '' === trim($label)) {
+            return null;
+        }
+        $item['price_label'] = $label;
+        return $item;
+    }
+
+    $item['cost'] = shipxio_shipping_startup_calculator_parse_cost($stored['cost'] ?? null, $item['currency']);
+    return null === $item['cost'] ? null : $item;
+}
+
+/** Arrange items by a saved key order; unlisted items keep their natural order at the end. */
+function shipxio_shipping_startup_calculator_apply_order($items, $order)
+{
+    if (! is_array($order)) {
+        return $items;
+    }
+    $byKey = array_column($items, null, 'key');
+    $ordered = array();
+    foreach ($order as $key) {
+        if (is_string($key) && isset($byKey[$key])) {
+            $ordered[] = $byKey[$key];
+            unset($byKey[$key]);
+        }
+    }
+    return array_merge($ordered, array_values($byKey));
+}
+
+/**
+ * The effective calculator items.
+ *
+ * The saved option holds deviations from the defaults keyed by item key, plus
+ * two reserved entries: "_custom" (administrator-added items) and "_order"
+ * (display order). Item keys never start with an underscore.
+ */
 function shipxio_shipping_startup_calculator_items()
 {
     $items = shipxio_shipping_startup_calculator_default_items();
-    $overrides = get_option('shipxio_shipping_startup_calculator_items', array());
-    if (! is_array($overrides)) {
+    $saved = get_option('shipxio_shipping_startup_calculator_items', array());
+    if (! is_array($saved)) {
         return $items;
     }
 
     foreach ($items as &$item) {
-        $override = $overrides[$item['key']] ?? array();
+        $override = $saved[$item['key']] ?? array();
+        if (! is_array($override)) {
+            continue;
+        }
         foreach (array('name', 'description') as $field) {
-            if (is_array($override) && isset($override[$field]) && is_string($override[$field])) {
+            if (isset($override[$field]) && is_string($override[$field])) {
                 $item[$field] = $override[$field];
+            }
+        }
+        // Priority override; an empty string means "None" (no badge).
+        if (isset($override['priority']) && is_string($override['priority'])) {
+            if ('' === $override['priority']) {
+                unset($item['priority']);
+            } elseif (isset(shipxio_shipping_startup_calculator_priority_labels()[$override['priority']])) {
+                $item['priority'] = $override['priority'];
+            }
+        }
+        // Currency and billing period stay fixed; an invalid stored price is ignored.
+        if (null === $item['cost']) {
+            if (isset($override['price_label']) && is_string($override['price_label']) && '' !== trim($override['price_label'])) {
+                $item['price_label'] = $override['price_label'];
+            }
+        } elseif (isset($override['cost'])) {
+            $cost = shipxio_shipping_startup_calculator_parse_cost($override['cost'], $item['currency']);
+            if (null !== $cost) {
+                $item['cost'] = $cost;
             }
         }
     }
     unset($item);
-    return $items;
+
+    $keys = array_column($items, 'key');
+    foreach ((array) ($saved['_custom'] ?? array()) as $stored) {
+        $custom = shipxio_shipping_startup_calculator_custom_item($stored);
+        if (null !== $custom && ! in_array($custom['key'], $keys, true)) {
+            $items[] = $custom;
+            $keys[] = $custom['key'];
+        }
+    }
+
+    return shipxio_shipping_startup_calculator_apply_order($items, $saved['_order'] ?? null);
 }

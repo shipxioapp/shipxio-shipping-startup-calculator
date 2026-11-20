@@ -59,5 +59,74 @@
         });
     }
 
+    /**
+     * Item reordering. Rows carry hidden _order inputs, so moving a row in the
+     * DOM changes the order that is saved. Without JavaScript the buttons stay
+     * hidden and the saved order is kept.
+     */
+    function initReorder() {
+        const table = document.querySelector('.shipxio-startup-admin .form-table');
+        const status = document.querySelector('.shipxio-startup-admin [data-shipxio-move-status]');
+
+        if (!table) {
+            return;
+        }
+
+        const rows = () => Array.from(table.querySelectorAll('tr.shipxio-startup-item-row'));
+
+        const refresh = () => {
+            const list = rows();
+            list.forEach((row, index) => {
+                const up = row.querySelector('[data-shipxio-move="up"]');
+                const down = row.querySelector('[data-shipxio-move="down"]');
+                if (up) {
+                    up.disabled = index === 0;
+                }
+                if (down) {
+                    down.disabled = index === list.length - 1;
+                }
+            });
+        };
+
+        rows().forEach((row) => {
+            const controls = row.querySelector('.shipxio-startup-move');
+            if (controls) {
+                controls.hidden = false;
+            }
+        });
+
+        table.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-shipxio-move]');
+            if (!button) {
+                return;
+            }
+
+            const row = button.closest('tr.shipxio-startup-item-row');
+            const list = rows();
+            const index = list.indexOf(row);
+            const up = button.dataset.shipxioMove === 'up';
+            const target = list[index + (up ? -1 : 1)];
+
+            if (!row || !target) {
+                return;
+            }
+
+            target.insertAdjacentElement(up ? 'beforebegin' : 'afterend', row);
+            refresh();
+
+            // Keep focus on the moved row; fall back to its other button at an edge.
+            const other = row.querySelector(`[data-shipxio-move="${up ? 'down' : 'up'}"]`);
+            (button.disabled ? other : button).focus();
+
+            if (status) {
+                const name = row.querySelector('th')?.textContent.trim() || '';
+                status.textContent = `${name}: ${rows().indexOf(row) + 1} / ${rows().length}`;
+            }
+        });
+
+        refresh();
+    }
+
     initCopyButtons();
+    initReorder();
 })();

@@ -8,6 +8,8 @@ if (! defined('ABSPATH')) {
 /** @var string $id */
 /** @var bool $show_intro */
 /** @var array $items */
+
+$shipxio_shipping_startup_calculator_priorities = shipxio_shipping_startup_calculator_priority_labels();
 ?>
 <div class="shipxio-shipping-startup-calculator">
     <?php // Without the heading the section still needs an accessible name. ?>
@@ -44,18 +46,27 @@ if (! defined('ABSPATH')) {
                                     type="checkbox"
                                     name="startup_items[]"
                                     value="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['key']); ?>"
+                                    <?php // Variable prices carry no cost data, so no total ever includes them. ?>
+                                    <?php if (null !== $shipxio_shipping_startup_calculator_item['cost']) : ?>
                                     data-cost="<?php echo esc_attr((string) $shipxio_shipping_startup_calculator_item['cost']); ?>"
                                     data-currency="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['currency']); ?>"
                                     data-billing-period="<?php echo esc_attr($shipxio_shipping_startup_calculator_item['billing_period']); ?>"
+                                    <?php endif; ?>
                                 >
                                 <span class="calculator-check" aria-hidden="true"></span>
                                 <span class="calculator-item-content">
-                                    <span class="calculator-item-name"><?php echo esc_html($shipxio_shipping_startup_calculator_item['name']); ?></span>
+                                    <span class="calculator-item-heading">
+                                        <span class="calculator-item-name"><?php echo esc_html($shipxio_shipping_startup_calculator_item['name']); ?></span>
+                                        <?php if (isset($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_item['priority'] ?? ''])) : ?>
+                                            <span class="calculator-priority priority-<?php echo esc_attr($shipxio_shipping_startup_calculator_item['priority']); ?>"><?php echo esc_html($shipxio_shipping_startup_calculator_priorities[$shipxio_shipping_startup_calculator_item['priority']]); ?></span>
+                                        <?php endif; ?>
+                                    </span>
                                     <span class="calculator-item-price"><?php echo esc_html(shipxio_shipping_startup_calculator_price($shipxio_shipping_startup_calculator_item)); ?></span>
                                 </span>
                             </label>
 
                             <?php // The disclosure stays outside the label so it never toggles the checkbox. ?>
+                            <?php if ('' !== trim($shipxio_shipping_startup_calculator_item['description']) || isset($shipxio_shipping_startup_calculator_item['aside']) || null !== $shipxio_shipping_startup_calculator_details) : ?>
                             <details class="calculator-details">
                                 <summary class="calculator-details-summary">
                                     <svg class="calculator-info-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.25" r="1" fill="currentColor"/></svg>
@@ -67,7 +78,9 @@ if (! defined('ABSPATH')) {
                                     </span>
                                 </summary>
                                 <div class="calculator-details-body">
-                                    <p class="calculator-item-description"><?php echo esc_html($shipxio_shipping_startup_calculator_item['description']); ?></p>
+                                    <?php if ('' !== trim($shipxio_shipping_startup_calculator_item['description'])) : ?>
+                                        <p class="calculator-item-description"><?php echo esc_html($shipxio_shipping_startup_calculator_item['description']); ?></p>
+                                    <?php endif; ?>
                                     <?php if (isset($shipxio_shipping_startup_calculator_item['aside'])) : ?>
                                         <p class="calculator-item-aside"><?php echo esc_html($shipxio_shipping_startup_calculator_item['aside']); ?></p>
                                     <?php endif; ?>
@@ -92,6 +105,7 @@ if (! defined('ABSPATH')) {
                                     <?php endif; ?>
                                 </div>
                             </details>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
